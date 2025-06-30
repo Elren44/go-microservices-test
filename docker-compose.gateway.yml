@@ -15,7 +15,7 @@ services:
       POSTGRES_PASSWORD: root
       POSTGRES_DB: gateway_db
     volumes:
-      - gateway-db-data:/var/lib/postgresql/data
+      - ./db/gateway-db-data:/var/lib/postgresql/data
     networks:
       - gateway-net
     ports:
