@@ -1,0 +1,22 @@
+services:
+  gateway:
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    depends_on:
+      - gateway-db
+    networks:
+      - gateway-net
+
+  gateway-db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: gateway_db
+    volumes:
+      - gateway-db-data:/var/lib/postgresql/data
+    networks:
+      - gateway-net
+    ports:
+      - "5433:5432"

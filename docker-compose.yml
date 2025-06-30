@@ -1,0 +1,9 @@
+services: {}
+
+volumes:
+  gateway-db-data:
+  auth-db-data:
+
+networks:
+  gateway-net:
+  auth-net:
