@@ -5,6 +5,8 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - gateway-db
+    volumes:
+      - ./gateway/config.yml:/root/config.yml
     networks:
       - gateway-net
 
@@ -19,4 +21,4 @@ services:
     networks:
       - gateway-net
     ports:
-      - "5433:5432"
+      - '5433:5432'

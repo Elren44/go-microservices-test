@@ -5,11 +5,15 @@ import (
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/Elren44/go-auth/config"
 )
 
 func main() {
 	fmt.Println("Сервис авторизации")
+	config := config.NewAuthConfig()
 	logger := log.New(os.Stdout, "[INFO] ", log.LstdFlags)
+	logger.Println(config)
 	mux := http.NewServeMux()
 	mux.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNoContent) // 204 No Content

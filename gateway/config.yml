@@ -1,0 +1,2 @@
+dsn: postgres://root:root@localhost:5433/gateway_db
+env: dev # dev / prod
