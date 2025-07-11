@@ -2,13 +2,14 @@ package config
 
 import "github.com/ilyakaznacheev/cleanenv"
 
-type authConfig struct {
-	DSN string `json:"dsn" env:"DSN" yaml:"dsn"`
-	ENV string `json:"env" env:"ENV" yaml:"env"`
+type AuthConfig struct {
+	DSN    string `json:"dsn" env:"dsn" yaml:"dsn"`
+	ENV    string `json:"env" env:"env" yaml:"env"`
+	Secret string `json:"secret" env:"secret" yaml:"secret"`
 }
 
-func NewAuthConfig() *authConfig {
-	var authCfg authConfig
+func NewAuthConfig() *AuthConfig {
+	var authCfg AuthConfig
 	err := cleanenv.ReadConfig("config.yml", &authCfg)
 	if err != nil {
 		panic(err)

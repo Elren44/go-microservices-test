@@ -1,2 +1,3 @@
 dsn: postgres://root:root@localhost:5434/auth_db
 env: dev # dev / prod
+secret: adsifasp**%^812
