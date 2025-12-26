@@ -78,9 +78,13 @@ func refreshHandler(w http.ResponseWriter, r *http.Request, app *config.App) {
 		return
 	}
 
-	// (опционально) обновляем refresh токен (rotation strategy)
-	// newRefresh, _ := auth.GenerateRefreshToken(claims.UserID, app.Config.Secret)
-	// http.SetCookie(w, &http.Cookie{...})
+	// ✅ Генерируем новый refresh token (rotation strategy)
+	newRefreshToken, err := GenerateRefreshToken(claims.UserID, app.Config.Secret)
+	if err != nil {
+		app.Logger.Error("Refresh token generation failed: ", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
 
 	http.SetCookie(w, &http.Cookie{
 		Name:     "access_token",
@@ -88,6 +92,14 @@ func refreshHandler(w http.ResponseWriter, r *http.Request, app *config.App) {
 		HttpOnly: true,
 		Path:     "/",
 		Expires:  time.Now().Add(5 * time.Minute),
+	})
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     "refresh_token",
+		Value:    newRefreshToken,
+		HttpOnly: true,
+		Path:     "/",
+		Expires:  time.Now().Add(7 * 24 * time.Hour),
 	})
 
 	w.Header().Set("Content-Type", "application/json")

@@ -32,10 +32,10 @@ func NewRouter(cfg *config.GatewayConfig) http.Handler {
 		r.Method = "POST"
 		authProxy.ServeHTTP(w, r)
 	})
-	mux.HandleFunc("/auth/refresh", func(w http.ResponseWriter, r *http.Request) {
-		r.URL.Path = "/refresh"
-		authProxy.ServeHTTP(w, r)
-	})
+	// mux.HandleFunc("/auth/refresh", func(w http.ResponseWriter, r *http.Request) {
+	// 	r.URL.Path = "/refresh"
+	// 	authProxy.ServeHTTP(w, r)
+	// })
 	mux.HandleFunc("POST /auth/logout", func(w http.ResponseWriter, r *http.Request) {
 		r.URL.Path = "/logout"
 		r.Method = "POST"

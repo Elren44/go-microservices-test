@@ -25,7 +25,7 @@ func NewRouter(app *config.App) http.Handler {
 		loginHandler(w, r, app)
 	})
 
-	mux.HandleFunc("/refresh", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("POST /refresh", func(w http.ResponseWriter, r *http.Request) {
 		refreshHandler(w, r, app)
 	})
 
