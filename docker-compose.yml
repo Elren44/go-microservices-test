@@ -7,3 +7,4 @@ volumes:
 networks:
   gateway-net:
   auth-net:
+  microservices-net:

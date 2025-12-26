@@ -1,0 +1,22 @@
+version: '3'
+
+vars:
+  COMPOSE_FILES: -f docker-compose.yml -f docker-compose.gateway.yml -f docker-compose.auth.yml
+  DOCKER_COMPOSE: docker-compose {{.COMPOSE_FILES}}
+
+tasks:
+  build:
+    desc: Сборка всех микросервисов
+    cmds:
+      - "{{.DOCKER_COMPOSE}} build"
+    silent: true
+  run:
+    desc: Запуск всех микросервисов в фоне
+    cmds:
+      - "{{.DOCKER_COMPOSE}} up -d"
+    silent: true
+  down:
+    desc: Остановка всех микросервисов
+    cmds:
+      - "{{.DOCKER_COMPOSE}} down"
+    silent: true

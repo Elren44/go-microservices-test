@@ -7,10 +7,9 @@ services:
       - auth-db
     networks:
       - auth-net
+      - microservices-net
     volumes:
       - ./auth-service/config.yml:/root/config.yml
-    ports:
-      - '4000:4000'
 
   auth-db:
     image: postgres:16

@@ -6,12 +6,15 @@ import (
 	"net/http"
 
 	"github.com/Elren44/go-gateway/config"
+	"github.com/Elren44/go-gateway/internal/router"
 )
 
 func main() {
 	fmt.Println("API Шлюз!")
-	config := config.NewAuthConfig()
-	fmt.Println(config)
+	cfg := config.NewGatewayConfig()
+	fmt.Println(cfg)
 
-	log.Fatal(http.ListenAndServe("localhost:8080", nil))
+	mux := router.NewRouter(cfg)
+
+	log.Fatal(http.ListenAndServe(":8080", mux))
 }

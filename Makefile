@@ -7,7 +7,7 @@ build:
 	$(DOCKER_COMPOSE) build
 
 run:
-	$(DOCKER_COMPOSE) up
+	$(DOCKER_COMPOSE) up -d
 
 down:
 	$(DOCKER_COMPOSE) down

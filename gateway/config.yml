@@ -1,2 +1,4 @@
 dsn: postgres://root:root@localhost:5433/gateway_db
 env: dev # dev / prod
+auth_service_url: http://auth-service:4000
+secret: adsifasp**%^812

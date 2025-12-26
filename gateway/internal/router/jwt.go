@@ -21,7 +21,7 @@ func GenerateAccessToken(userID int, secret string) (string, error) {
 	claims := AccessClaims{
 		UserID: userID,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(5 * time.Minute)), // Short expiry for demo
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(15 * time.Minute)),
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -59,4 +59,12 @@ func ParseRefreshToken(tokenStr, secret string) (*RefreshClaims, error) {
 		return nil, errors.New("invalid refresh token")
 	}
 	return claims, nil
+}
+
+func GetUserIDFromToken(tokenStr, secret string) (int, error) {
+	claims, err := ParseAccessToken(tokenStr, secret)
+	if err != nil {
+		return 0, err
+	}
+	return claims.UserID, nil
 }

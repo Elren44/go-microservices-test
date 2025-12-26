@@ -3,9 +3,11 @@ package router
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/Elren44/go-auth/config"
 	"net/http"
+	"strconv"
 	"time"
+
+	"github.com/Elren44/go-auth/config"
 )
 
 func loginHandler(w http.ResponseWriter, r *http.Request, app *config.App) {
@@ -38,8 +40,20 @@ func loginHandler(w http.ResponseWriter, r *http.Request, app *config.App) {
 		Path:     "/",
 		Expires:  time.Now().Add(7 * 24 * time.Hour),
 	})
+	http.SetCookie(w, &http.Cookie{
+		Name:     "access_token",
+		Value:    accessToken,
+		HttpOnly: true,
+		Path:     "/",
+		Expires:  time.Now().Add(5 * time.Minute),
+	})
 
-	json.NewEncoder(w).Encode(map[string]string{"access_token": accessToken})
+	clientType := r.Header.Get("X-Client-Type")
+	if clientType == "mobile" {
+		json.NewEncoder(w).Encode(map[string]string{"access_token": accessToken})
+	} else {
+		json.NewEncoder(w).Encode(map[string]string{"message": "Login successful"})
+	}
 }
 func refreshHandler(w http.ResponseWriter, r *http.Request, app *config.App) {
 	cookie, err := r.Cookie("refresh_token")
@@ -68,17 +82,33 @@ func refreshHandler(w http.ResponseWriter, r *http.Request, app *config.App) {
 	// newRefresh, _ := auth.GenerateRefreshToken(claims.UserID, app.Config.Secret)
 	// http.SetCookie(w, &http.Cookie{...})
 
-	// ✅ Возвращаем новый access token
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{
-		"access_token": accessToken,
+	http.SetCookie(w, &http.Cookie{
+		Name:     "access_token",
+		Value:    accessToken,
+		HttpOnly: true,
+		Path:     "/",
+		Expires:  time.Now().Add(5 * time.Minute),
 	})
+
+	w.Header().Set("Content-Type", "application/json")
+	clientType := r.Header.Get("X-Client-Type")
+	if clientType == "mobile" {
+		json.NewEncoder(w).Encode(map[string]string{"access_token": accessToken})
+	} else {
+		json.NewEncoder(w).Encode(map[string]string{"message": "Token refreshed"})
+	}
 }
 
 func meHandler(w http.ResponseWriter, r *http.Request, app *config.App) {
-	userID, ok := GetUserID(r)
-	if !ok {
-		app.Logger.Warn("Unauthorized request")
+	userIDStr := r.Header.Get("X-User-ID")
+	if userIDStr == "" {
+		app.Logger.Warn("Missing X-User-ID header")
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+	userID, err := strconv.Atoi(userIDStr)
+	if err != nil {
+		app.Logger.Warn("Invalid X-User-ID header")
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
@@ -93,6 +123,7 @@ func registerHandler(w http.ResponseWriter, r *http.Request, app *config.App) {
 }
 
 func logoutHandler(w http.ResponseWriter, r *http.Request, app *config.App) {
+	// Clear refresh token cookie
 	http.SetCookie(w, &http.Cookie{
 		Name:     "refresh_token",
 		Value:    "",
@@ -100,7 +131,16 @@ func logoutHandler(w http.ResponseWriter, r *http.Request, app *config.App) {
 		Path:     "/",
 		Expires:  time.Unix(0, 0),
 	})
+	http.SetCookie(w, &http.Cookie{
+		Name:     "access_token",
+		Value:    "",
+		HttpOnly: true,
+		Path:     "/",
+		Expires:  time.Unix(0, 0),
+	})
+	// Access token handled on client side (remove from localStorage/memory)
 	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Logged out"))
 }
 
 func healthHandler(w http.ResponseWriter, r *http.Request) {

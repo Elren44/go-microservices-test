@@ -9,6 +9,9 @@ services:
       - ./gateway/config.yml:/root/config.yml
     networks:
       - gateway-net
+      - microservices-net
+    ports:
+      - '8080:8080'
 
   gateway-db:
     image: postgres:16
